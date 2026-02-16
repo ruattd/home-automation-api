@@ -1,0 +1,6 @@
+.env
+.idea
+.vscode
+dist
+node_modules
+pnpm-workspace.yaml
