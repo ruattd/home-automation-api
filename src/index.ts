@@ -5,8 +5,9 @@ import { PORT } from './args.js';
 import './api/gpio.js';
 import './api/rf.js';
 
-process.on("SIGINT", () => exit());
-process.on("SIGTERM", () => exit());
+process.on("SIGINT", exit);
+process.on("SIGTERM", exit);
+process.on("exit", exit);
 
 // start listening
 app.listen(PORT, () => {

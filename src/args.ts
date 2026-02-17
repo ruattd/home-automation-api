@@ -4,6 +4,7 @@ import { parseArgs } from 'util';
 // parse commandline args
 const { values } = parseArgs({
     options: {
+        // "debug": { type: "boolean", short: "d" },
         "port": { type: "string", short: "p" },
         "rf-passwd": { type: "string" },
         "rf-channel": { type: "string" },

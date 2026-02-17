@@ -2,18 +2,21 @@ import { status, t } from 'elysia';
 import { SW, SW1, SW2, SW3, SW4 } from '../native/pin_definitions.js';
 import { app, onCleanup } from '../app.js';
 import rpio from 'rpio';
-
-rpio.init({
-    mapping: 'gpio',
-    close_on_exit: false,
-});
+import { sleep } from '../util/time.js';
 
 onCleanup(async () => {
     rpio.exit();
 });
 
+// initialize GPIO
+rpio.init({
+    mapping: 'gpio',
+    close_on_exit: false,
+});
+for (const pin of SW) rpio.open(pin, rpio.OUTPUT);
+
 function swInfo(name: string, pin: number, id: number) {
-    const v = rpio.read(pin, rpio.OUTPUT);
+    const v = rpio.read(pin);
     return { name: name, value: v, id: id };
 }
 
@@ -38,11 +41,12 @@ app.get('/sw', () => {
     }
 })
 
-app.post('/sw/:id', ({ params: { id }, query: { value } }) => {
+app.post('/sw/:id', async ({ params: { id }, query: { value } }) => {
     const pin = SW[id - 1];
     if (!pin) return new Response(undefined, { status: 404 });
-    if (value) rpio.write(pin, value);
-    return rpio.read(pin, rpio.OUTPUT);
+    if (value !== undefined) rpio.write(pin, value);
+    await sleep(100);
+    return new Response(rpio.read(pin).toString());
 }, {
     detail: {
         summary: "Get or set switch value",

@@ -22,7 +22,9 @@ export function onCleanup(func: () => Promise<void>) {
     onCleanupList.push(func);
 }
 
+let isExiting = false;
 export async function exit() {
+    if (isExiting) return;
     console.log("\nStopping Elysia server...");
     if (app.server) app.stop();
     console.log("Performing cleanup...");
